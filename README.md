@@ -5,4 +5,4 @@
 
 ```mermaid
 graph LR
-A(Dependency Injection) -- TO --> B((Autofac))
+A(Dependency Injection) -- With --> B((Autofac))
