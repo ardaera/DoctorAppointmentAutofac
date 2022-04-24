@@ -68,12 +68,12 @@ namespace DoctorAppointment.RestAPI
         public void ConfigureContainer(ContainerBuilder builder)
         {
             builder.RegisterAssemblyTypes(typeof(DoctorAppService).Assembly)
-                .AssignableTo<DoctorService>().AsImplementedInterfaces()
+                .AssignableTo<Service>().AsImplementedInterfaces()
                 .InstancePerLifetimeScope();
             builder.RegisterType<EFUnitOfWork>().As<UnitOfWork>()
                 .InstancePerLifetimeScope();
             builder.RegisterAssemblyTypes(typeof(EFDoctorRepository).Assembly)
-                .AssignableTo<DoctorRepository>().AsImplementedInterfaces()
+                .AssignableTo<Repository>().AsImplementedInterfaces()
                 .InstancePerLifetimeScope();
             //builder.RegisterType<ApplicationDbContext>()
             //    .WithParameter("ConnectionString", ConnectionString)
