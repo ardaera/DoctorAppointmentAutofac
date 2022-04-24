@@ -1,3 +1,5 @@
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using DoctorAppointment.Infrastructure.Application;
 using DoctorAppointment.Persistence.EF;
 using DoctorAppointment.Persistence.EF.Appointments;
@@ -31,8 +33,10 @@ namespace DoctorAppointment.RestAPI
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            //string _ConnectionString = Configuration.GetConnectionString("ConnectionString");
+            //ConnectionString = _ConnectionString;
         }
-
+        //public string ConnectionString;
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -44,20 +48,36 @@ namespace DoctorAppointment.RestAPI
             services.AddDbContext<ApplicationDbContext>
                 (_ => _.UseSqlServer(Configuration["ConnectionString"]));
 
-            services.AddScoped<DoctorRepository, EFDoctorRepository>();
-            services.AddScoped<UnitOfWork, EFUnitOfWork>();
-            services.AddScoped<DoctorService, DoctorAppService>();
+            //services.AddScoped<DoctorRepository, EFDoctorRepository>();
+            //services.AddScoped<UnitOfWork, EFUnitOfWork>();
+            //services.AddScoped<DoctorService, DoctorAppService>();
 
-            services.AddScoped<PatientRepository, EFPatientRepository>();
-            services.AddScoped<PatientService, PatientAppService>();
+            //services.AddScoped<PatientRepository, EFPatientRepository>();
+            //services.AddScoped<PatientService, PatientAppService>();
 
-            services.AddScoped<AppointmentRepository, EFAppointmentRepository>();
-            services.AddScoped<AppointmentService, AppointmentAppService>();
+            //services.AddScoped<AppointmentRepository, EFAppointmentRepository>();
+            //services.AddScoped<AppointmentService, AppointmentAppService>();
 
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "DoctorAppointment.RestAPI", Version = "v1" });
             });
+        }
+
+        // this method is for autofac registers:
+        public void ConfigureContainer(ContainerBuilder builder)
+        {
+            builder.RegisterAssemblyTypes(typeof(DoctorAppService).Assembly)
+                .AssignableTo<DoctorService>().AsImplementedInterfaces()
+                .InstancePerLifetimeScope();
+            builder.RegisterType<EFUnitOfWork>().As<UnitOfWork>()
+                .InstancePerLifetimeScope();
+            builder.RegisterAssemblyTypes(typeof(EFDoctorRepository).Assembly)
+                .AssignableTo<DoctorRepository>().AsImplementedInterfaces()
+                .InstancePerLifetimeScope();
+            //builder.RegisterType<ApplicationDbContext>()
+            //    .WithParameter("ConnectionString", ConnectionString)
+            //    .AsSelf().InstancePerLifetimeScope();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
